@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wp2hugo"
-version = "0.1.2"
+version = "0.1.3"
 requires-python = ">3.8"
 authors = [
     { name = "Jostein Elvaker Haande", email = "tolecnal@tolecnal.net" }
@@ -32,6 +32,15 @@ classifiers = [
     "Operating System :: Unix",
     "Topic :: Internet :: WWW/HTTP"
 ]
+
+[project.urls]
+homepage = "https://tolecnal.net"
+repository = "https://github.com/tolecnal/wp2hugo"
+changelog = "https://github.com/tolecnal/wp2hugo/blob/main/CHANGELOG.md"
+documentation = "https://github.com/tolecnal/wp2hugo/blob/main/README.md"
+bugs = "https://github.com/tolecnal/wp2hugo/issues"
+issues = "https://github.com/tolecnal/wp2hugo/issues"
+tracker = "https://github.com/tolecnal/wp2hugo/issues"
 
 [project.scripts]
 wp2hugo = "wp2hugo.__main__:cli"
