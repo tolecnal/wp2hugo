@@ -1,5 +1,6 @@
 build:
-	python -m build
+	python3 -m pip install build twine
+	python3 -m build
 
 confirm_build:
 	twine check dist/*

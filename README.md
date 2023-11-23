@@ -24,7 +24,8 @@ pip3 install wp2hugo
 
 ### Create
 
-To create the MD files, use `create.`
+To create the MD files, use `create`.
+
 `wp2hugo create <xmlfile> --outdir <directory> --lowercasetags`
 
 Parameters:
@@ -53,14 +54,14 @@ Parameters:
   - Path to the WXR XML file
   - Required: yes
 
-## Create export
+## Create export file
 
 The WXR export can be created using one of two methods:
 
 - export from the WordPress web dashboard
 - export made from using the `WP CLI` tool
 
-### Wordpress web deashboard
+### Wordpress web dashboard
 
 Follow these steps to create the export.
 
