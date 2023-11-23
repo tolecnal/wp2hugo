@@ -1,4 +1,6 @@
-# commands.py
+"""A Python CLI application that converts a WordPress WXR backup
+ file to MD files usable by Hugo.
+ """
 
 import re
 from dataclasses import dataclass
@@ -83,13 +85,15 @@ def stats(xmlfile, lowercasetags):
         Whether or not to lowercase the tags found in the XML file
     """
 
-    blogInfo = Blog.from_file(xmlfile, lowercasetags)
+    blog_info = Blog.from_file(xmlfile, lowercasetags)
 
-    click.echo(f"Title: {blogInfo.title}")
-    click.echo(f"Description: {blogInfo.description}")
-    click.echo(f"URL: {blogInfo.url}")
-    click.echo(f"Number of posts found: {blogInfo.numberOfPosts}")
-    click.echo(f"Number of pages found: {blogInfo.numberOfPages}")
+    click.echo(f"Title: {blog_info.title}")
+    click.echo(f"Description: {blog_info.description}")
+    click.echo(f"URL: {blog_info.url}")
+    click.echo(f"Number of posts found: {blog_info.number_of_posts}")
+    click.echo(f"Number of pages found: {blog_info.number_of_pages}")
+    click.echo(f"Number of tags found: {blog_info.number_of_tags}")
+    click.echo(f"Number of categories found: {blog_info.number_of_categories}")
 
 
 def get_display_name_by_login(author_login, xml_data):
@@ -116,8 +120,7 @@ def get_display_name_by_login(author_login, xml_data):
 
     if display_name_element is not None:
         return display_name_element.text
-    else:
-        return None
+    return None
 
 
 def make_safe_yaml_value(input_string):
@@ -139,10 +142,8 @@ def make_safe_yaml_value(input_string):
         # Use double quotes if the string contains single quotes
         if "'" in input_string:
             return f'"{input_string}"'
-        else:
-            return f"'{input_string}'"
-    else:
-        return input_string
+        return f"'{input_string}'"
+    return input_string
 
 
 @dataclass
@@ -156,13 +157,13 @@ class Blog:
             The description as defined by the <description> in the WXR file
         url : str
             The URL to the WordPress site as defined in the WXR file
-        numberOfPosts : int
+        number_of_posts : int
             Number of posts found in the WXR file
-        numberOfPages : int
+        number_of_pages : int
             Number of pages found in the WXR file
-        numberOfTags : int
+        number_of_tags : int
             Number of tags found in the WXR file
-        numberOfCategories : int
+        number_of_categories : int
             Number of categories found in the WXR file
         posts : list
             A list object with all the posts found in the WXR file
@@ -171,16 +172,16 @@ class Blog:
     title: str
     description: str
     url: str
-    numberOfPosts: int
-    numberOfPages: int
-    numberOfTags: int
-    numberOfCategories: int
+    number_of_posts: int
+    number_of_pages: int
+    number_of_tags: int
+    number_of_categories: int
     posts: list
 
     @classmethod
-    def from_file(cls, input: Path, lowercasetags):
+    def from_file(cls, input_file: Path, lowercasetags):
         """Create a Blog object from a WXR file"""
-        tree = ET.parse(input)
+        tree = ET.parse(input_file)
 
         # The root of WXR is an <rss> element, followed by a <channel> element
         channel = tree.getroot().find("channel")
@@ -198,10 +199,14 @@ class Blog:
         merged_xml_string = ET.tostring(merged_root, encoding="utf-8").decode("utf-8")
         authors = merged_xml_string
 
-        numberOfPosts = len(channel.findall(".//item[wp:post_type='post']", NAMESPACES))
-        numberOfPages = len(channel.findall(".//item[wp:post_type='page']", NAMESPACES))
-        numberOfTags = len(channel.findall(".//wp:tag", NAMESPACES))
-        numberOfCategories = len(channel.findall(".//wp:category", NAMESPACES))
+        number_of_posts = len(
+            channel.findall(".//item[wp:post_type='post']", NAMESPACES)
+        )
+        number_of_pages = len(
+            channel.findall(".//item[wp:post_type='page']", NAMESPACES)
+        )
+        number_of_tags = len(channel.findall(".//wp:tag", NAMESPACES))
+        number_of_categories = len(channel.findall(".//wp:category", NAMESPACES))
 
         posts = [
             Post.from_element(e, lowercasetags, authors)
@@ -214,10 +219,10 @@ class Blog:
             description=description,
             url=url,
             posts=posts,
-            numberOfPosts=numberOfPosts,
-            numberOfPages=numberOfPages,
-            numberOfTags=numberOfTags,
-            numberOfCategories=numberOfCategories,
+            number_of_posts=number_of_posts,
+            number_of_pages=number_of_pages,
+            number_of_tags=number_of_tags,
+            number_of_categories=number_of_categories,
         )
 
 
@@ -239,11 +244,11 @@ class Post:
             The actual content of the post
         date : datetime
             When the post was published
-        dateStr : str
+        datestr : str
             When the post was published, string with quotes
         modified : datetime
             When the post was last modified
-        modifiedStr : str
+        modifiedstr : str
             When the post was last modified, string with quotes
         categories : string
             A string list of the categories linked with the post
@@ -261,9 +266,9 @@ class Post:
     author: str
     content: str
     date: datetime
-    dateStr: str
+    datestr: str
     modified: datetime
-    modifiedStr: str
+    modifiedstr: str
     categories: str
     tags: str
     post_type: str
@@ -281,14 +286,14 @@ class Post:
         creator = element.find("dc:creator", NAMESPACES).text
         author = get_display_name_by_login(creator, authors)
 
-        id = element.find("wp:post_id", NAMESPACES).text
+        post_id = element.find("wp:post_id", NAMESPACES).text
         content = element.find("content:encoded", NAMESPACES).text
         if content is not None:
             content = markdownify(content)
             content = re.sub(r"\n\s*\n", "\n\n", content)
         try:
             date = datetime.fromisoformat(element.find("wp:post_date", NAMESPACES).text)
-            dateStr = '"%s"' % (date)
+            datestr = f'"{date}"'
         except ValueError:
             date = None
 
@@ -296,7 +301,7 @@ class Post:
             modified = datetime.fromisoformat(
                 element.find("wp:post_modified", NAMESPACES).text
             )
-            modifiedStr = '"%s"' % (modified)
+            modifiedstr = f'"{modified}"'
         except ValueError:
             modified = None
 
@@ -321,12 +326,12 @@ class Post:
             title=title,
             name=name,
             author=author,
-            id=id,
+            id=post_id,
             content=content,
             date=date,
-            dateStr=dateStr,
+            datestr=datestr,
             modified=modified,
-            modifiedStr=modifiedStr,
+            modifiedstr=modifiedstr,
             categories=categories,
             tags=tags,
             post_type=post_type,
@@ -342,8 +347,8 @@ class Post:
         lines.append("layout: post")
         lines.append(f"title: {self.title}")
         lines.append(f"author: {self.author}")
-        lines.append(f"date: {self.dateStr}")
-        lines.append(f"modified: {self.modifiedStr}")
+        lines.append(f"date: {self.datestr}")
+        lines.append(f"modified: {self.modifiedstr}")
         if len(self.categories) > 0:
             lines.append(f"categories:\n{self.categories}")
         if len(self.tags) > 0:

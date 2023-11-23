@@ -1,4 +1,4 @@
-# __main__.py
+"""__main__.py"""
 
 import click
 
@@ -7,7 +7,7 @@ from . import commands
 
 @click.group()
 def cli():
-    pass
+    """Start the CLI application"""
 
 
 cli.add_command(commands.create)

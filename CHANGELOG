@@ -1,0 +1,37 @@
+
+# Change Log
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [0.1.1] - 2023-11-23
+
+No steps required.
+
+### Added
+
+Nothing added.
+
+### Changed
+
+After having set up a GitHub workflow for Pylint, it was quite obvious there was room for improvment. Fixed most important linting issues.
+
+### Fixed
+
+As noted in `Changed`, linting issues.
+
+## [0.1.0] - 2023-11-23
+
+### Added
+
+Inital release.
+
+### Changed
+
+Nothing changed.
+
+### Fixed
+
+Nothing fixed.

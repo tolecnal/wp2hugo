@@ -9,8 +9,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wp2hugo"
-version = "0.1.0"
-requires-python = ">3.6"
+version = "0.1.1"
+requires-python = ">3.8"
 authors = [
     { name = "Jostein Elvaker Haande", email = "tolecnal@tolecnal.net" }
 ]
