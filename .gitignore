@@ -1,0 +1,5 @@
+out/**
+venv/**
+wp2hugo.egg-info/**
+*.xml
+.ruff.cache

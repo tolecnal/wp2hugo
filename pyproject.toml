@@ -1,0 +1,53 @@
+# pyproject.toml
+
+[build-system]
+requires = [
+    "setuptools>=65.5.0",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wp2hugo"
+version = "0.1.0"
+requires-python = ">3.6"
+authors = [
+    { name = "Jostein Elvaker Haande", email = "tolecnal@tolecnal.net" }
+]
+description = "A Python CLI application that converts a WordPress WXR backup file to MD files usable by Hugo."
+readme = "README.md"
+
+dependencies = [
+    "click >= 8.1.3",
+    "PyYAML >= 6.0.1",
+    "markdownify >= 0.11.6"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Unix",
+    "Topic :: Internet :: WWW/HTTP"
+]
+
+[project.scripts]
+wp2hugo = "wp2hugo.__main__:cli"
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
